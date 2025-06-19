@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "prettify": "prettier --write *.js **/*.js **/**/*.js"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -16,5 +17,8 @@
     "mybatis-mapper": "^0.8.0",
     "pg": "^8.16.0",
     "xss": "^1.0.15"
+  },
+  "devDependencies": {
+    "prettier": "^3.5.3"
   }
 }

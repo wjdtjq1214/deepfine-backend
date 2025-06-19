@@ -1,0 +1,8 @@
+
+node_modules/
+.prettierrc
+.vscode/
+.idea/
+.DS_Store
+*.config.js
+package-lock.json
