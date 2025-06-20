@@ -20,15 +20,13 @@
 					zoom : 17
 				});
 
-				addMarkersTooMuch();
+				addMarkersTooMuch(JSON.parse(JSON.stringify(<%- JSON.stringify(poiArray) %>)));
 			}
 
 			var markers = [];
 
-			function addMarkersTooMuch() {
+			function addMarkersTooMuch(pois) {
 				removeMarkers();
-
-				var pois = JSON.parse(JSON.stringify(<%- JSON.stringify(poiArray) %>));
 				
 				for (const poiObj of pois) {
 					var marker = new Tmapv2.Marker({
@@ -47,6 +45,41 @@
 					markers[i].setMap(null);
 				}
 				markers = [];
+			}
+		</script>
+		<script>
+			function importExcel() {
+				const input = document.createElement('input');
+				input.type = 'file';
+				input.name = 'file';
+				input.accept = '.xlsx, .xls';
+				input.onchange = e => {
+					const file = e.target.files[0];
+					if (file) {
+						const formData = new FormData();
+						formData.append('file', file);
+						fetch('/poi/import', {
+							method: 'POST',
+							body: formData
+						})
+					}
+				};
+
+				input.click();
+			}
+
+			function refreshMarkers() {
+				fetch('/poi')
+					.then(response => response.json())
+					.then(data => {
+						if (data && data.length > 0) {
+							addMarkersTooMuch(data);
+						} else {
+							alert('No POI data found.');
+							removeMarkers()
+						}
+					})
+					.catch(error => console.error('Error fetching POI data:', error));
 			}
 		</script>
     </head>
@@ -90,6 +123,7 @@
                 class="grid size-15 place-content-center rounded-full border border-[#ccc] bg-[#fff] shadow-md"
                 aria-label="refresh"
                 title="refresh"
+				onclick="refreshMarkers()"
         >
             <span>refresh</span>
         </button>
