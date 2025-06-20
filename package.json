@@ -14,7 +14,9 @@
     "extend": "^3.0.2",
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
+    "multer": "^2.0.1",
     "mybatis-mapper": "^0.8.0",
+    "node-xlsx": "^0.24.0",
     "pg": "^8.16.0",
     "xss": "^1.0.15"
   },

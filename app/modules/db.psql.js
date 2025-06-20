@@ -95,30 +95,17 @@ exports.selectOne = (mapperName, queryId, param, onSuccess, onError) => {
 };
 
 /* Query : insert (return : inserted count of rows) */
-exports.insert = (mapperName, queryId, param, onSuccess, onError) => {
-  sql = mapper.getStatement(mapperName, queryId, param, format);
-  preSqlLog(sql);
+exports.insert = async (mapperName, queryId, param, onSuccess, onError) => {
+  try {
+    sql = mapper.getStatement(mapperName, queryId, param, format);
+    preSqlLog(sql);
 
-  pool
-    .query(sql)
-    .then((result) => {
-      postSqlLog(result.rowCount);
+    return await pool.query(sql);
+  } catch (err) {
+    console.error('Error db.psql.js(insert)');
 
-      if (typeof onSuccess === 'function') {
-        onSuccess(result.rowCount);
-      } else {
-        return;
-      }
-    })
-    .catch((err) => {
-      postSqlLog();
-
-      if (typeof onError === 'function') {
-        onError(err);
-      } else {
-        return;
-      }
-    });
+    throw err;
+  }
 };
 
 /* Query : insertReturn (return : inserted rows) */
@@ -203,30 +190,17 @@ exports.updateReturn = (mapperName, queryId, param, onSuccess, onError) => {
 };
 
 /* Query : update (return : updated count of rows) */
-exports.delete = (mapperName, queryId, param, onSuccess, onError) => {
-  sql = mapper.getStatement(mapperName, queryId, param, format);
-  preSqlLog(sql);
+exports.delete = async (mapperName, queryId, param) => {
+  try {
+    sql = mapper.getStatement(mapperName, queryId, param, format);
+    preSqlLog(sql);
 
-  pool
-    .query(sql)
-    .then((result) => {
-      postSqlLog(result.rowCount);
+    return await pool.query(sql);
+  } catch (err) {
+    console.error('Error db.psql.js(delete)');
 
-      if (typeof onSuccess === 'function') {
-        onSuccess(result.rowCount);
-      } else {
-        return;
-      }
-    })
-    .catch((err) => {
-      postSqlLog();
-
-      if (typeof onError === 'function') {
-        onError(err);
-      } else {
-        return;
-      }
-    });
+    throw err;
+  }
 };
 
 exports.getConnection = () => {

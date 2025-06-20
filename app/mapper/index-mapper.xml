@@ -2,5 +2,25 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="poi">
-
+  <delete id="poiDeleteAll">
+    DELETE FROM poi
+  </delete>
+  
+  <insert id="poiInsertMulti">
+    INSERT INTO
+      poi
+    (
+      title,
+      latitude,
+      longitude      
+    )
+    VALUES
+    <foreach collection="pois" item="poi"  separator=",">
+    (
+      #{poi.title},
+      #{poi.latitude},
+      ${poi.longitude}
+    )
+    </foreach>
+  </insert>
 </mapper>
