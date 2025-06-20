@@ -13,6 +13,7 @@
         <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey=VxOtMgjZGc7kTP50VWRKC62WBf2QRzxeaz2ViIqB"></script>
 		<script>
 			var map;
+			let poiArray = JSON.parse(JSON.stringify(<%- JSON.stringify(poiArray) %>))
 
 			function initTmap(){
 				map = new Tmapv2.Map("map_div", {
@@ -20,15 +21,17 @@
 					zoom : 17
 				});
 
-				addMarkersTooMuch(JSON.parse(JSON.stringify(<%- JSON.stringify(poiArray) %>)));
+				addMarkersTooMuch();
+
+				conosle.log(poiArray)
 			}
 
 			var markers = [];
 
-			function addMarkersTooMuch(pois) {
+			function addMarkersTooMuch() {
 				removeMarkers();
 				
-				for (const poiObj of pois) {
+				for (const poiObj of poiArray) {
 					var marker = new Tmapv2.Marker({
 						position: new Tmapv2.LatLng(poiObj.latitude, poiObj.longitude),
 						label: poiObj.title,
@@ -38,26 +41,33 @@
 					marker.setMap(map);
 					markers.push(marker);
 				}
+
+				map.setCenter(new Tmapv2.LatLng(poiArray[0].latitude, poiArray[0].longitude));
 			}
 
 			function removeMarkers() {
 				for (var i = 0; i < markers.length; i++) {
 					markers[i].setMap(null);
 				}
+
 				markers = [];
 			}
 		</script>
 		<script>
 			function importExcel() {
 				const input = document.createElement('input');
+
 				input.type = 'file';
 				input.name = 'file';
 				input.accept = '.xlsx, .xls';
 				input.onchange = e => {
 					const file = e.target.files[0];
+
 					if (file) {
 						const formData = new FormData();
+
 						formData.append('file', file);
+
 						fetch('/poi/import', {
 							method: 'POST',
 							body: formData
@@ -73,13 +83,33 @@
 					.then(response => response.json())
 					.then(data => {
 						if (data && data.length > 0) {
-							addMarkersTooMuch(data);
+							poiArray = data
+
+							addMarkersTooMuch();
+
+							map.setCenter(new Tmapv2.LatLng(poiArray[0].latitude, poiArray[0].longitude));
 						} else {
 							alert('No POI data found.');
+							
 							removeMarkers()
 						}
 					})
 					.catch(error => console.error('Error fetching POI data:', error));
+			}
+
+			function searchPoi() {
+				const input = document.querySelector('input[type="search"]');
+				const query = input.value.trim();
+				
+				searchPoiArray = poiArray.filter(poi => 
+					poi.title.toLowerCase().includes(query.toLowerCase())
+				);
+
+				if (searchPoiArray.length === 1) {
+					map.setCenter(new Tmapv2.LatLng(searchPoiArray[0].latitude, searchPoiArray[0].longitude));
+				} else {
+					alert('No results found for your search or multiple results found.');
+				}
 			}
 		</script>
     </head>
@@ -97,7 +127,7 @@
                 <input type="search" required placeholder="Search"/>
             </label>
 
-            <button type="button" class="flex-none size-10 cursor-pointer">
+            <button type="button" class="flex-none size-10 cursor-pointer" onclick="searchPoi()">
                 <svg class="w-full h-[2rem] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <g
                             stroke-linejoin="round"
