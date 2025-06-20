@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: 'postgres:latest'
+    container_name: 'deepfine-postgres'
+    ports:
+      - '${DB_PORT}:5432'
+    volumes:
+      - '/var/lib/postgresql/data'
+      - './init/init.sql:/docker-entrypoint-initdb.d/createdb.sql'
+    environment:
+      POSTGRES_USER: '${DB_USER}'
+      POSTGRES_PASSWORD: '${DB_PW}'
+      POSTGRES_DB: '${DB_NAME}'
+      LANG: 'en_US.utf8'
