@@ -24,3 +24,15 @@ exports.importPoi = async function (req) {
     throw error;
   }
 };
+
+exports.getAllPoi = async function () {
+  try {
+    const selectResult = await psql.select('poi', 'poiSelectAll', {});
+
+    return selectResult;
+  } catch (error) {
+    console.error('Error poiController(getAllPoi)');
+
+    throw error;
+  }
+};

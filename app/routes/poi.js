@@ -18,4 +18,15 @@ router.post('/import', upload.single('file'), async function (req, res, next) {
   }
 });
 
+router.get('/', async function (req, res, next) {
+  try {
+    const result = await poiController.getAllPoi();
+
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Failed to get POIs.' });
+  }
+});
+
 module.exports = router;
