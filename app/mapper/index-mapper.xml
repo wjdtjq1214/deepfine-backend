@@ -23,4 +23,11 @@
     )
     </foreach>
   </insert>
+
+  <select id="poiSelectAll">
+    SELECT
+      *
+    FROM
+      poi
+  </select>
 </mapper>

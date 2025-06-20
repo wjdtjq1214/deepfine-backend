@@ -10,10 +10,48 @@
         <title>TmapCodingTest</title>
         <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
         <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-        <script src="/getScript"></script>
+        <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey=VxOtMgjZGc7kTP50VWRKC62WBf2QRzxeaz2ViIqB"></script>
+		<script>
+			var map;
+
+			function initTmap(){
+				map = new Tmapv2.Map("map_div", {
+					center : new Tmapv2.LatLng(37.56520450, 126.98702028), // 지도 초기 좌표
+					zoom : 17
+				});
+
+				addMarkersTooMuch();
+			}
+
+			var markers = [];
+
+			function addMarkersTooMuch() {
+				removeMarkers();
+
+				var pois = JSON.parse(JSON.stringify(<%- JSON.stringify(poiArray) %>));
+				
+				for (const poiObj of pois) {
+					var marker = new Tmapv2.Marker({
+						position: new Tmapv2.LatLng(poiObj.latitude, poiObj.longitude),
+						label: poiObj.title,
+						icon: '/images/pin-location.svg'
+					});
+
+					marker.setMap(map);
+					markers.push(marker);
+				}
+			}
+
+			function removeMarkers() {
+				for (var i = 0; i < markers.length; i++) {
+					markers[i].setMap(null);
+				}
+				markers = [];
+			}
+		</script>
     </head>
 
-    <body class="overflow-hidden">
+    <body class="overflow-hidden" onload="initTmap()">
 
     <!-- map, list , root -->
     <section class="relative h-dvh w-dvh bg-black/20">
@@ -60,6 +98,7 @@
                 class="grid size-15 place-content-center rounded-full border border-[#ccc] bg-[#fff] shadow-md"
                 aria-label="import"
                 title="import"
+				onclick="importExcel()"
         >
             <span>import</span>
         </button>

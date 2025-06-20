@@ -29,40 +29,19 @@ let postSqlLog = (count) => {
 };
 
 /* Query : select multi rows (return : array) */
-exports.select = (mapperName, queryId, param, onSuccess, onError) => {
-  sql = mapper.getStatement(mapperName, queryId, param, format);
-  preSqlLog(sql);
+exports.select = async (mapperName, queryId, param) => {
+  try {
+    sql = mapper.getStatement(mapperName, queryId, param, format);
+    preSqlLog(sql);
 
-  pool
-    .query(sql)
-    .then((result) => {
-      if (typeof onSuccess === 'function') {
-        // SELECT SQL 여러 개일 경우 조회 결과가 배열로 RETURN 됨
-        if (Array.isArray(result)) {
-          for (this_result of result) {
-            postSqlLog(this_result.rowCount);
-            for (let data of this_result.rows) {
-              data = funcCmmn.snakeToCamel(data);
-            }
-          }
-          onSuccess(result);
-        } else {
-          postSqlLog(result.rowCount);
-          onSuccess(result.rowCount ? funcCmmn.snakeToCamel(result.rows) : []);
-        }
-      } else {
-        return;
-      }
-    })
-    .catch((err) => {
-      postSqlLog();
+    const selectResult = await pool.query(sql);
 
-      if (typeof onError === 'function') {
-        onError(err);
-      } else {
-        return;
-      }
-    });
+    return selectResult.rows;
+  } catch (err) {
+    console.error('Error db.psql.js(select)');
+
+    throw err;
+  }
 };
 
 /* Query : select 1 row (return : json) */
