@@ -3,8 +3,11 @@
 ### 사전 준비
 
 최상위 폴더에 아래 두 파일 생성
+
+```
 .env.docker-compose
 config.json
+```
 
 ### 실행 환경
 
